@@ -4,7 +4,7 @@
   "description": "Este projeto traz uma implementação do desafio de recrutamento da Blip.",
   "main": "index.js",
   "scripts": {
-    "start": "nodemon ./index.js",
+    "start": "node ./index.js",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "author": "",

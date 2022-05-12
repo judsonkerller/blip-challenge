@@ -12,7 +12,7 @@ const getGithubApiAsync = async () => {
         const newJson = json2array(json)
         //console.log(newJson[3]['created_at']);
         const langSortedJson = await sortFunction(newJson)
-        console.log(langSortedJson)
+        //console.log(langSortedJson)
         const finalRepoData = await generateRepoData(langSortedJson)
         //const finalJson = JSON.parse(langSortedJson)
         return {
@@ -41,15 +41,21 @@ const sortFunction = async (data) => {
 }
 
 const generateRepoData = async (data) => {
-    var finalRepoData = []
+    var finalRepoData = {
+        "itemType":"application/vnd.lime.document-select+json",
+        "items":[]
+    }
+
     for (i = 0; i < data.length; i++) {
         var currentJson = 
-            {
-              "avatar_url": data[i]['owner']['avatar_url'],
-              "name": data[i]['name'],
-              "description": data[i]['description']
+            {"header": {"type":"application/vnd.lime.media-link+json",
+                "value": {"title":data[i]['name'],
+                "text":data[i]['description'],
+                "type":"image/jpeg",
+                "uri":data[i]['owner']['avatar_url']}
             }
-        finalRepoData.push(currentJson)
+            }
+        finalRepoData["items"].push(currentJson)
     }
     return finalRepoData;
 }
@@ -64,11 +70,13 @@ function json2array(json){
 }
 
 
-server.get('/challenge', async (request, response) => {
+server.get('/', async (request, response) => {
     const result = await getGithubApiAsync()
     
     response.status(result.status)
     response.send(result.data)
 })
 
-server.listen(8005, () => { console.log('Server initialized!') })
+server.listen(process.env.PORT || 3000, function(){
+    console.log("Express server listening on port %d in %s mode", this.address().port, server.settings.env);
+  });
